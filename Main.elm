@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 
 main : Html msg
 main =
-    Html.form [] [ directionChoice, baseDateInput, saveButton ]
+    Html.form [] [ directionChoice, baseDateInput, controlButtons ]
 
 
 directionChoice : Html msg
@@ -21,9 +21,12 @@ directionChoice =
 
 baseDateInput : Html msg
 baseDateInput =
-    input [ type_ "date", name "baseDate" ] []
+    input [ type_ "date", name "baseDate", placeholder "YYYY-MM-DD" ] []
 
 
-saveButton : Html msg
-saveButton =
-    button [ type_ "button" ] [ text "Save" ]
+controlButtons : Html msg
+controlButtons =
+    div []
+        [ button [ type_ "button" ] [ text "Save" ]
+        , button [ type_ "button" ] [ text "Cancel" ]
+        ]
