@@ -5,6 +5,22 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 
 
+type DirectionField
+    = DirectionUndefined
+    | DirectionUp
+    | DirectionDown
+
+
+type DateField
+    = DateUndefined
+    | DateFieldError String
+    | Date
+
+
+type alias Form =
+    { direction : DirectionField, date : DateField }
+
+
 type OriginDefined
     = Up Date
     | Down Date
