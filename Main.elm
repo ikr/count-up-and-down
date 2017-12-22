@@ -43,7 +43,22 @@ model =
 
 main : Html msg
 main =
-    Html.form [] [ directionChoice, baseDateInput, controlButtons ]
+    view model
+
+
+view : Model -> Html msg
+view model =
+    case model of
+        Tick _ ->
+            ticker
+
+        Edit origin _ ->
+            Html.form [] [ directionChoice, baseDateInput, controlButtons origin ]
+
+
+ticker : Html msg
+ticker =
+    div [] [ text "Not implemented yet" ]
 
 
 directionChoice : Html msg
@@ -83,9 +98,14 @@ baseDateInput =
         []
 
 
-controlButtons : Html msg
-controlButtons =
+controlButtons : Origin -> Html msg
+controlButtons origin =
     div []
-        [ button [ type_ "submit" ] [ text "Save" ]
-        , button [ type_ "button" ] [ text "Cancel" ]
-        ]
+        (button [ type_ "submit" ] [ text "Save" ]
+            :: case origin of
+                OriginDefined ->
+                    [ button [ type_ "button" ] [ text "Cancel" ] ]
+
+                OriginUndefined ->
+                    []
+        )
