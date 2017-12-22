@@ -33,12 +33,12 @@ type Origin
 
 type Model
     = Tick OriginDefined
-    | Edit Origin
+    | Edit Origin Form
 
 
 model : Model
 model =
-    Edit OriginUndefined
+    Edit OriginUndefined { direction = DirectionUndefined, date = DateUndefined }
 
 
 main : Html msg
