@@ -27,7 +27,7 @@ type OriginDefined
 
 
 type Origin
-    = OriginDefined
+    = OriginDefined OriginDefined
     | OriginUndefined
 
 
@@ -53,7 +53,7 @@ view model =
             ticker
 
         Edit origin _ ->
-            Html.form [] [ directionChoice, baseDateInput, controlButtons origin ]
+            Html.form [] [ directionChoice, dateInput, controlButtons origin ]
 
 
 ticker : Html msg
@@ -85,11 +85,11 @@ directionChoice =
         ]
 
 
-baseDateInput : Html msg
-baseDateInput =
+dateInput : Html msg
+dateInput =
     input
         [ type_ "date"
-        , name "baseDate"
+        , name "date"
         , required True
         , placeholder "YYYY-MM-DD"
         , title "YYYY-MM-DD"
@@ -98,12 +98,25 @@ baseDateInput =
         []
 
 
+dateInputDefaultValue : Origin -> String
+dateInputDefaultValue origin =
+    case origin of
+        OriginUndefined ->
+            ""
+
+        OriginDefined (Up date) ->
+            iso8601 date
+
+        OriginDefined (Down date) ->
+            iso8601 date
+
+
 controlButtons : Origin -> Html msg
 controlButtons origin =
     div []
         (button [ type_ "submit" ] [ text "Save" ]
             :: case origin of
-                OriginDefined ->
+                OriginDefined _ ->
                     [ button [ type_ "button" ] [ text "Cancel" ] ]
 
                 OriginUndefined ->
