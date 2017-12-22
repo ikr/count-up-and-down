@@ -12,21 +12,29 @@ main =
 directionChoice : Html msg
 directionChoice =
     div []
-        [ input [ type_ "radio", name "direction", id "directionUp" ] []
+        [ input [ type_ "radio", name "direction", id "directionUp", required True ] []
         , label [ for "directionUp" ] [ text "Count up from" ]
-        , input [ type_ "radio", name "direction", id "directionDown" ] []
+        , input [ type_ "radio", name "direction", id "directionDown", required True ] []
         , label [ for "directionDown" ] [ text "Count down to" ]
         ]
 
 
 baseDateInput : Html msg
 baseDateInput =
-    input [ type_ "date", name "baseDate", placeholder "YYYY-MM-DD" ] []
+    input
+        [ type_ "date"
+        , name "baseDate"
+        , required True
+        , placeholder "YYYY-MM-DD"
+        , title "YYYY-MM-DD"
+        , pattern "^\\d{4}-[0-1]\\d-[0-3]\\d$"
+        ]
+        []
 
 
 controlButtons : Html msg
 controlButtons =
     div []
-        [ button [ type_ "button" ] [ text "Save" ]
+        [ button [ type_ "submit" ] [ text "Save" ]
         , button [ type_ "button" ] [ text "Cancel" ]
         ]
