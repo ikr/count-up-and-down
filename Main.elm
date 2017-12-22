@@ -1,7 +1,28 @@
 module Main exposing (..)
 
+import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+
+
+type OriginDefined
+    = Up Date
+    | Down Date
+
+
+type Origin
+    = OriginDefined
+    | OriginUndefined
+
+
+type Model
+    = Tick OriginDefined
+    | Edit Origin
+
+
+model : Model
+model =
+    Edit OriginUndefined
 
 
 main : Html msg
