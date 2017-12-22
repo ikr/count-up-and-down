@@ -12,9 +12,23 @@ main =
 directionChoice : Html msg
 directionChoice =
     div []
-        [ input [ type_ "radio", name "direction", id "directionUp", required True ] []
+        [ input
+            [ type_ "radio"
+            , name "direction"
+            , value "up"
+            , id "directionUp"
+            , required True
+            ]
+            []
         , label [ for "directionUp" ] [ text "Count up from" ]
-        , input [ type_ "radio", name "direction", id "directionDown", required True ] []
+        , input
+            [ type_ "radio"
+            , name "direction"
+            , value "down"
+            , id "directionDown"
+            , required True
+            ]
+            []
         , label [ for "directionDown" ] [ text "Count down to" ]
         ]
 
