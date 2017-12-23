@@ -21,24 +21,19 @@ type alias Form =
     { direction : DirectionField, date : DateField }
 
 
-type OriginDefined
-    = Up Date
-    | Down Date
-
-
-type Origin
-    = OriginDefined OriginDefined
-    | OriginUndefined
+type Counting
+    = UpFrom Date
+    | DownTo Date
 
 
 type Model
-    = Tick OriginDefined
-    | Edit Origin Form
+    = Tick Counting
+    | Edit (Maybe Counting) Form
 
 
 model : Model
 model =
-    Edit OriginUndefined { direction = DirectionUndefined, date = DateUndefined }
+    Edit Nothing { direction = DirectionUndefined, date = DateUndefined }
 
 
 main : Html msg
@@ -52,8 +47,8 @@ view model =
         Tick _ ->
             ticker
 
-        Edit origin _ ->
-            Html.form [] [ directionChoice, dateInput, controlButtons origin ]
+        Edit countingOrNot _ ->
+            Html.form [] [ directionChoice, dateInput, controlButtons countingOrNot ]
 
 
 ticker : Html msg
@@ -98,28 +93,28 @@ dateInput =
         []
 
 
-dateInputDefaultValue : Origin -> String
-dateInputDefaultValue origin =
-    case origin of
-        OriginUndefined ->
+dateInputDefaultValue : Maybe Counting -> String
+dateInputDefaultValue countingOrNot =
+    case countingOrNot of
+        Nothing ->
             ""
 
-        OriginDefined (Up date) ->
+        Just (UpFrom date) ->
             iso8601 date
 
-        OriginDefined (Down date) ->
+        Just (DownTo date) ->
             iso8601 date
 
 
-controlButtons : Origin -> Html msg
-controlButtons origin =
+controlButtons : Maybe Counting -> Html msg
+controlButtons countingOrNot =
     div []
         (button [ type_ "submit" ] [ text "Save" ]
-            :: case origin of
-                OriginDefined _ ->
+            :: case countingOrNot of
+                Just _ ->
                     [ button [ type_ "button" ] [ text "Cancel" ] ]
 
-                OriginUndefined ->
+                Nothing ->
                     []
         )
 
