@@ -47,8 +47,12 @@ view model =
         Tick _ ->
             ticker
 
-        Edit countingOrNot _ ->
-            Html.form [] [ directionChoice, dateInput, controlButtons countingOrNot ]
+        Edit countingOrNot { direction } ->
+            Html.form []
+                [ directionChoice direction
+                , dateInput
+                , controlButtons countingOrNot
+                ]
 
 
 ticker : Html msg
@@ -56,28 +60,33 @@ ticker =
     div [] [ text "Not implemented yet" ]
 
 
-directionChoice : Html msg
-directionChoice =
+directionChoice : DirectionField -> Html msg
+directionChoice direction =
     div []
         [ input
-            [ type_ "radio"
-            , name "direction"
-            , value "up"
-            , id "directionUp"
-            , required True
-            ]
+            (directionRadioAttributes "up" <| direction == DirectionUp)
             []
         , label [ for "directionUp" ] [ text "Count up from" ]
         , input
-            [ type_ "radio"
-            , name "direction"
-            , value "down"
-            , id "directionDown"
-            , required True
-            ]
+            (directionRadioAttributes "down" <| direction == DirectionDown)
             []
         , label [ for "directionDown" ] [ text "Count down to" ]
         ]
+
+
+directionRadioAttributes : String -> Bool -> List (Attribute msg)
+directionRadioAttributes key isChecked =
+    [ type_ "radio"
+    , name "direction"
+    , value key
+    , id key
+    , required True
+    ]
+        ++ (if isChecked then
+                [ checked True ]
+            else
+                []
+           )
 
 
 dateInput : Html msg
