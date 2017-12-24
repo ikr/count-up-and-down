@@ -13,8 +13,8 @@ type DirectionField
 
 type DateField
     = DateUndefined
-    | DateFieldError String
-    | Date
+    | DateInvalid
+    | DateValid Date
 
 
 type alias Form =
@@ -47,10 +47,10 @@ view model =
         Tick _ ->
             ticker
 
-        Edit countingOrNot { direction } ->
+        Edit countingOrNot { direction, date } ->
             Html.form []
                 [ directionChoice direction
-                , dateInput
+                , dateInput date
                 , controlButtons countingOrNot
                 ]
 
@@ -89,8 +89,8 @@ directionRadioAttributes key isChecked =
            )
 
 
-dateInput : Html msg
-dateInput =
+dateInput : DateField -> Html msg
+dateInput dateField =
     input
         [ type_ "date"
         , name "date"
@@ -98,20 +98,21 @@ dateInput =
         , placeholder "YYYY-MM-DD"
         , title "YYYY-MM-DD"
         , pattern "^\\d{4}-[0-1]\\d-[0-3]\\d$"
+        , defaultValue <| dateInputDefaultValue dateField
         ]
         []
 
 
-dateInputDefaultValue : Maybe Counting -> String
-dateInputDefaultValue countingOrNot =
-    case countingOrNot of
-        Nothing ->
+dateInputDefaultValue : DateField -> String
+dateInputDefaultValue dateField =
+    case dateField of
+        DateUndefined ->
             ""
 
-        Just (UpFrom date) ->
-            iso8601 date
+        DateInvalid ->
+            ""
 
-        Just (DownTo date) ->
+        DateValid date ->
             iso8601 date
 
 
