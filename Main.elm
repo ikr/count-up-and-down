@@ -208,4 +208,20 @@ iso8601 date =
 
 update : Msg -> Model -> Model
 update msg model =
-    model
+    case model of
+        Tick _ ->
+            model
+
+        Edit _ { direction, date } ->
+            case msg of
+                FormChangeDirection directionField ->
+                    model
+
+                FormChangeDate dateField ->
+                    model
+
+                FormSubmit ->
+                    model
+
+                FormCancel ->
+                    model
