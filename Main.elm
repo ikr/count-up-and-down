@@ -212,13 +212,13 @@ update msg model =
         Tick _ ->
             model
 
-        Edit _ { direction, date } ->
+        Edit countingOrNot form ->
             case msg of
                 FormChangeDirection directionField ->
-                    model
+                    Edit countingOrNot { form | direction = directionField }
 
                 FormChangeDate dateField ->
-                    model
+                    Edit countingOrNot { form | date = dateField }
 
                 FormSubmit ->
                     model
