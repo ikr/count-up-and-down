@@ -31,6 +31,13 @@ type Model
     | Edit (Maybe Counting) Form
 
 
+type Msg
+    = FormChangeDirection DirectionField
+    | FormChangeDate DateField
+    | FormSubmit
+    | FormCancel
+
+
 model : Model
 model =
     Edit Nothing { direction = DirectionUndefined, date = DateUndefined }
@@ -114,6 +121,16 @@ dateInputDefaultValue dateField =
 
         DateValid date ->
             iso8601 date
+
+
+dateInputOnInputHandler : String -> Msg
+dateInputOnInputHandler value =
+    case Date.fromString value of
+        Ok date ->
+            FormChangeDate (DateValid date)
+
+        Err _ ->
+            FormChangeDate DateInvalid
 
 
 controlButtons : Maybe Counting -> Html msg
