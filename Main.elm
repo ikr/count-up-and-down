@@ -3,7 +3,7 @@ module Main exposing (..)
 import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onInput, onCheck)
 
 
 type DirectionField
@@ -78,33 +78,50 @@ ticker =
     div [] [ text "Not implemented yet" ]
 
 
-directionChoice : DirectionField -> Html msg
+directionChoice : DirectionField -> Html Msg
 directionChoice direction =
     div []
         [ input
-            (directionRadioAttributes "up" <| direction == DirectionUp)
+            (directionRadioAttributes "up" directionRadioUpOnCheckHandler <| direction == DirectionUp)
             []
         , label [ for "directionUp" ] [ text "Count up from" ]
         , input
-            (directionRadioAttributes "down" <| direction == DirectionDown)
+            (directionRadioAttributes "down" directionRadioDownOnCheckHandler <| direction == DirectionDown)
             []
         , label [ for "directionDown" ] [ text "Count down to" ]
         ]
 
 
-directionRadioAttributes : String -> Bool -> List (Attribute msg)
-directionRadioAttributes key isChecked =
+directionRadioAttributes : String -> (Bool -> Msg) -> Bool -> List (Attribute Msg)
+directionRadioAttributes key handler isChecked =
     [ type_ "radio"
     , name "direction"
     , value key
     , id key
     , required True
+    , onCheck handler
     ]
         ++ (if isChecked then
                 [ checked True ]
             else
                 []
            )
+
+
+directionRadioUpOnCheckHandler : Bool -> Msg
+directionRadioUpOnCheckHandler checked =
+    if checked then
+        FormChangeDirection DirectionUp
+    else
+        FormChangeDirection DirectionUndefined
+
+
+directionRadioDownOnCheckHandler : Bool -> Msg
+directionRadioDownOnCheckHandler checked =
+    if checked then
+        FormChangeDirection DirectionDown
+    else
+        FormChangeDirection DirectionUndefined
 
 
 dateInput : DateField -> Html Msg
