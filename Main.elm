@@ -3,6 +3,7 @@ module Main exposing (..)
 import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onInput)
 
 
 type DirectionField
@@ -43,12 +44,22 @@ model =
     Edit Nothing { direction = DirectionUndefined, date = DateUndefined }
 
 
-main : Html msg
+main : Program Never Model Msg
 main =
-    view model
+    beginnerProgram
+        { model =
+            Edit Nothing
+                { direction = DirectionUndefined, date = DateUndefined }
+        , view = view
+        , update = update
+        }
 
 
-view : Model -> Html msg
+
+-- VIEW
+
+
+view : Model -> Html Msg
 view model =
     case model of
         Tick _ ->
@@ -96,7 +107,7 @@ directionRadioAttributes key isChecked =
            )
 
 
-dateInput : DateField -> Html msg
+dateInput : DateField -> Html Msg
 dateInput dateField =
     input
         [ type_ "date"
@@ -106,6 +117,7 @@ dateInput dateField =
         , title "YYYY-MM-DD"
         , pattern "^\\d{4}-[0-1]\\d-[0-3]\\d$"
         , defaultValue <| dateInputDefaultValue dateField
+        , onInput dateInputOnInputHandler
         ]
         []
 
@@ -188,3 +200,12 @@ iso8601 date =
                 "12"
         , Date.day date |> toString |> String.padLeft 2 '0'
         ]
+
+
+
+-- UPDATE
+
+
+update : Msg -> Model -> Model
+update msg model =
+    model
