@@ -233,7 +233,7 @@ update msg model =
                     Edit countingOrNot { form | direction = directionField }
 
                 FormChangeDate dateField ->
-                    Edit countingOrNot { form | date = dateField }
+                    Edit countingOrNot { form | date = dateField, error = Nothing }
 
                 FormSubmit ->
                     model
