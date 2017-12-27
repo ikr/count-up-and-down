@@ -3,7 +3,7 @@ module Main exposing (..)
 import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onCheck)
+import Html.Events exposing (..)
 
 
 type DirectionField
@@ -64,7 +64,7 @@ view model =
             ticker
 
         Edit countingOrNot { direction, date } ->
-            Html.form []
+            Html.form [ onSubmit FormSubmit ]
                 [ directionChoice direction
                 , dateInput date
                 , controlButtons countingOrNot
@@ -160,13 +160,13 @@ dateInputOnInputHandler value =
             FormChangeDate DateInvalid
 
 
-controlButtons : Maybe Counting -> Html msg
+controlButtons : Maybe Counting -> Html Msg
 controlButtons countingOrNot =
     div []
         (button [ type_ "submit" ] [ text "Save" ]
             :: case countingOrNot of
                 Just _ ->
-                    [ button [ type_ "button" ] [ text "Cancel" ] ]
+                    [ button [ type_ "button", onClick FormCancel ] [ text "Cancel" ] ]
 
                 Nothing ->
                     []
