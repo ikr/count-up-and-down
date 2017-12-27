@@ -19,7 +19,7 @@ type DateField
 
 
 type alias Form =
-    { direction : DirectionField, date : DateField }
+    { direction : DirectionField, date : DateField, error : Maybe String }
 
 
 type Counting
@@ -41,15 +41,13 @@ type Msg
 
 model : Model
 model =
-    Edit Nothing { direction = DirectionUndefined, date = DateUndefined }
+    Edit Nothing { direction = DirectionUndefined, date = DateUndefined, error = Nothing }
 
 
 main : Program Never Model Msg
 main =
     beginnerProgram
-        { model =
-            Edit Nothing
-                { direction = DirectionUndefined, date = DateUndefined }
+        { model = model
         , view = view
         , update = update
         }
