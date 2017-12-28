@@ -27,9 +27,13 @@ type Counting
     | DownTo Date
 
 
-type Model
+type Mode
     = Tick Counting
     | Edit (Maybe Counting) Form
+
+
+type alias Model =
+    { mode : Mode, now : Date }
 
 
 type Msg
@@ -39,9 +43,20 @@ type Msg
     | FormCancel
 
 
+
+-- MODEL
+
+
 model : Model
 model =
-    Edit Nothing { direction = DirectionUndefined, date = DateUndefined, error = Nothing }
+    { mode =
+        Edit Nothing
+            { direction = DirectionUndefined
+            , date = DateUndefined
+            , error = Nothing
+            }
+    , now = Date.fromTime 0
+    }
 
 
 main : Program Never Model Msg
@@ -58,8 +73,8 @@ main =
 
 
 view : Model -> Html Msg
-view model =
-    case model of
+view { mode, now } =
+    case mode of
         Tick _ ->
             ticker
 
@@ -222,18 +237,18 @@ iso8601 date =
 
 
 update : Msg -> Model -> Model
-update msg model =
-    case model of
+update msg { mode, now } =
+    case mode of
         Tick _ ->
-            model
+            Model mode now
 
         Edit countingOrNot form ->
             case msg of
                 FormChangeDirection directionField ->
-                    Edit countingOrNot { form | direction = directionField }
+                    Model (Edit countingOrNot { form | direction = directionField }) now
 
                 FormChangeDate dateField ->
-                    Edit countingOrNot { form | date = dateField, error = Nothing }
+                    Model (Edit countingOrNot { form | date = dateField, error = Nothing }) now
 
                 FormSubmit ->
                     let
@@ -242,18 +257,23 @@ update msg model =
                     in
                         case ( direction, date ) of
                             ( DirectionUp, DateValid d ) ->
-                                Tick (UpFrom d)
+                                Model (Tick (UpFrom d)) now
 
                             ( DirectionDown, DateValid d ) ->
-                                Tick (DownTo d)
+                                Model (Tick (DownTo d)) now
 
                             ( _, _ ) ->
-                                Edit countingOrNot { form | error = Just "This isn't a valid date" }
+                                Model
+                                    (Edit
+                                        countingOrNot
+                                        { form | error = Just "This isn't a valid date" }
+                                    )
+                                    now
 
                 FormCancel ->
                     case countingOrNot of
                         Just counting ->
-                            Tick counting
+                            Model (Tick counting) now
 
                         Nothing ->
-                            Edit Nothing form
+                            Model (Edit Nothing form) now
