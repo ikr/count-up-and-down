@@ -78,8 +78,13 @@ model =
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Time.every second (CurrentTime << Date.fromTime)
+subscriptions { mode } =
+    case mode of
+        Tick _ ->
+            Time.every second (CurrentTime << Date.fromTime)
+
+        Edit _ _ ->
+            Sub.none
 
 
 
@@ -307,5 +312,5 @@ update msg { mode, now } =
                         Nothing ->
                             ( Model (Edit Nothing form) now, Cmd.none )
 
-                CurrentTime t ->
-                    ( { mode = mode, now = t }, Cmd.none )
+                CurrentTime _ ->
+                    ( Model mode now, Cmd.none )
