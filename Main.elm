@@ -4,6 +4,7 @@ import Date exposing (Date)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import Task
 
 
 type DirectionField
@@ -41,10 +42,16 @@ type Msg
     | FormChangeDate DateField
     | FormSubmit
     | FormCancel
+    | CurrentTime Date
 
 
 
 -- MODEL
+
+
+init : ( Model, Cmd Msg )
+init =
+    ( model, Task.perform CurrentTime Date.now )
 
 
 model : Model
@@ -61,10 +68,11 @@ model =
 
 main : Program Never Model Msg
 main =
-    beginnerProgram
-        { model = model
-        , view = view
+    program
+        { init = init
         , update = update
+        , subscriptions = \_ -> Sub.none
+        , view = view
         }
 
 
@@ -236,19 +244,32 @@ iso8601 date =
 -- UPDATE
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg { mode, now } =
     case mode of
         Tick _ ->
-            Model mode now
+            case msg of
+                CurrentTime t ->
+                    ( { mode = mode, now = t }, Cmd.none )
+
+                _ ->
+                    ( Model mode now, Cmd.none )
 
         Edit countingOrNot form ->
             case msg of
                 FormChangeDirection directionField ->
-                    Model (Edit countingOrNot { form | direction = directionField }) now
+                    ( Model
+                        (Edit countingOrNot { form | direction = directionField })
+                        now
+                    , Cmd.none
+                    )
 
                 FormChangeDate dateField ->
-                    Model (Edit countingOrNot { form | date = dateField, error = Nothing }) now
+                    ( Model
+                        (Edit countingOrNot { form | date = dateField, error = Nothing })
+                        now
+                    , Cmd.none
+                    )
 
                 FormSubmit ->
                     let
@@ -257,23 +278,28 @@ update msg { mode, now } =
                     in
                         case ( direction, date ) of
                             ( DirectionUp, DateValid d ) ->
-                                Model (Tick (UpFrom d)) now
+                                ( Model (Tick (UpFrom d)) now, Cmd.none )
 
                             ( DirectionDown, DateValid d ) ->
-                                Model (Tick (DownTo d)) now
+                                ( Model (Tick (DownTo d)) now, Cmd.none )
 
                             ( _, _ ) ->
-                                Model
+                                ( Model
                                     (Edit
                                         countingOrNot
                                         { form | error = Just "This isn't a valid date" }
                                     )
                                     now
+                                , Cmd.none
+                                )
 
                 FormCancel ->
                     case countingOrNot of
                         Just counting ->
-                            Model (Tick counting) now
+                            ( Model (Tick counting) now, Cmd.none )
 
                         Nothing ->
-                            Model (Edit Nothing form) now
+                            ( Model (Edit Nothing form) now, Cmd.none )
+
+                CurrentTime t ->
+                    ( { mode = mode, now = t }, Cmd.none )
