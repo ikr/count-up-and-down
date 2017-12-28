@@ -236,7 +236,19 @@ update msg model =
                     Edit countingOrNot { form | date = dateField, error = Nothing }
 
                 FormSubmit ->
-                    model
+                    let
+                        { direction, date } =
+                            form
+                    in
+                        case ( direction, date ) of
+                            ( DirectionUp, DateValid d ) ->
+                                Tick (UpFrom d)
+
+                            ( DirectionDown, DateValid d ) ->
+                                Tick (DownTo d)
+
+                            ( _, _ ) ->
+                                Edit countingOrNot { form | error = Just "This isn't a valid date" }
 
                 FormCancel ->
                     model
