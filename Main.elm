@@ -107,6 +107,11 @@ view { mode, now } =
 
 ticker : Date -> Counting -> Html msg
 ticker now counting =
+    div [] [ text <| tickerString now counting ]
+
+
+tickerString : Date -> Counting -> String
+tickerString now counting =
     let
         origin =
             case counting of
@@ -119,7 +124,7 @@ ticker now counting =
         diff =
             abs <| Date.toTime origin - Date.toTime now
     in
-        div [] [ text <| (toString diff) ++ " ms" ]
+        (toString diff) ++ " ms"
 
 
 directionChoice : DirectionField -> Html Msg
@@ -324,5 +329,5 @@ update msg { mode, now } =
                         Nothing ->
                             ( Model (Edit Nothing form) now, Cmd.none )
 
-                CurrentTime _ ->
-                    ( Model mode now, Cmd.none )
+                CurrentTime t ->
+                    ( { mode = mode, now = t }, Cmd.none )
