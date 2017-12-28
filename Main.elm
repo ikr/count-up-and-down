@@ -94,8 +94,8 @@ subscriptions { mode } =
 view : Model -> Html Msg
 view { mode, now } =
     case mode of
-        Tick _ ->
-            ticker
+        Tick counting ->
+            ticker now counting
 
         Edit countingOrNot { direction, date } ->
             Html.form [ onSubmit FormSubmit ]
@@ -105,9 +105,21 @@ view { mode, now } =
                 ]
 
 
-ticker : Html msg
-ticker =
-    div [] [ text "Not implemented yet" ]
+ticker : Date -> Counting -> Html msg
+ticker now counting =
+    let
+        origin =
+            case counting of
+                UpFrom d ->
+                    d
+
+                DownTo d ->
+                    d
+
+        diff =
+            abs <| Date.toTime origin - Date.toTime now
+    in
+        div [] [ text <| (toString diff) ++ " ms" ]
 
 
 directionChoice : DirectionField -> Html Msg
