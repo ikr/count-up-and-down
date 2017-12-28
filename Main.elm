@@ -5,6 +5,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task
+import Time exposing (Time, second)
 
 
 type DirectionField
@@ -49,6 +50,16 @@ type Msg
 -- MODEL
 
 
+main : Program Never Model Msg
+main =
+    program
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
 init : ( Model, Cmd Msg )
 init =
     ( model, Task.perform CurrentTime Date.now )
@@ -66,14 +77,9 @@ model =
     }
 
 
-main : Program Never Model Msg
-main =
-    program
-        { init = init
-        , update = update
-        , subscriptions = \_ -> Sub.none
-        , view = view
-        }
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Time.every second (CurrentTime << Date.fromTime)
 
 
 
