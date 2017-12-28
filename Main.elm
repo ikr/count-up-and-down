@@ -251,4 +251,9 @@ update msg model =
                                 Edit countingOrNot { form | error = Just "This isn't a valid date" }
 
                 FormCancel ->
-                    model
+                    case countingOrNot of
+                        Just counting ->
+                            Tick counting
+
+                        Nothing ->
+                            Edit Nothing form
