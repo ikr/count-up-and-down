@@ -15,7 +15,7 @@ type DateField
 
 
 type alias Form =
-    { date : DateField, error : Maybe String }
+    { dateField : DateField, error : Maybe String }
 
 
 type Mode
@@ -57,7 +57,7 @@ model : Model
 model =
     { mode =
         Edit Nothing
-            { date = DateUndefined
+            { dateField = DateUndefined
             , error = Nothing
             }
     , now = Date.fromTime 0
@@ -99,9 +99,9 @@ tickerString dateA dateB =
 
 
 formContainer : Maybe Date -> Form -> Html Msg
-formContainer originOrNot { date, error } =
+formContainer originOrNot { dateField, error } =
     div []
-        ([ form originOrNot date ]
+        ([ form originOrNot dateField ]
             ++ case error of
                 Just errorString ->
                     [ text errorString ]
@@ -240,17 +240,17 @@ update msg { mode, now } =
             case msg of
                 FormChangeDate dateField ->
                     ( Model
-                        (Edit originOrNot { form | date = dateField, error = Nothing })
+                        (Edit originOrNot { form | dateField = dateField, error = Nothing })
                         now
                     , Cmd.none
                     )
 
                 FormSubmit ->
                     let
-                        { date } =
+                        { dateField } =
                             form
                     in
-                        case date of
+                        case dateField of
                             DateValid d ->
                                 ( Model (Tick d) now, Cmd.none )
 
