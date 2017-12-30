@@ -84,17 +84,8 @@ view { mode, now } =
         Tick origin ->
             ticker now origin
 
-        Edit originOrNot { date } ->
-            form originOrNot date
-
-
-form : Maybe Date -> DateField -> Html Msg
-form originOrNot dateField =
-    Html.form [ onSubmit FormSubmit ]
-        [ dateLabel
-        , dateInput dateField
-        , controlButtons originOrNot
-        ]
+        Edit originOrNot form ->
+            formContainer originOrNot form
 
 
 ticker : Date -> Date -> Html msg
@@ -104,7 +95,21 @@ ticker dateA dateB =
 
 tickerString : Date -> Date -> String
 tickerString dateA dateB =
-    (toString <| abs <| Date.toTime dateA - Date.toTime dateB) ++ " ms"
+    toString <| abs <| Date.toTime dateA - Date.toTime dateB
+
+
+formContainer : Maybe Date -> Form -> Html Msg
+formContainer originOrNot { date, error } =
+    form originOrNot date
+
+
+form : Maybe Date -> DateField -> Html Msg
+form originOrNot dateField =
+    Html.form [ onSubmit FormSubmit ]
+        [ dateLabel
+        , dateInput dateField
+        , controlButtons originOrNot
+        ]
 
 
 dateLabel : Html Msg
