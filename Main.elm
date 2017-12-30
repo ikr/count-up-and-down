@@ -8,12 +8,6 @@ import Task
 import Time exposing (Time, second)
 
 
-type DirectionField
-    = DirectionUndefined
-    | DirectionUp
-    | DirectionDown
-
-
 type DateField
     = DateUndefined
     | DateInvalid
@@ -21,17 +15,12 @@ type DateField
 
 
 type alias Form =
-    { direction : DirectionField, date : DateField, error : Maybe String }
-
-
-type Counting
-    = UpFrom Date
-    | DownTo Date
+    { date : DateField, error : Maybe String }
 
 
 type Mode
-    = Tick Counting
-    | Edit (Maybe Counting) Form
+    = Tick Date
+    | Edit (Maybe Date) Form
 
 
 type alias Model =
@@ -39,8 +28,7 @@ type alias Model =
 
 
 type Msg
-    = FormChangeDirection DirectionField
-    | FormChangeDate DateField
+    = FormChangeDate DateField
     | FormSubmit
     | FormCancel
     | CurrentTime Date
@@ -69,8 +57,7 @@ model : Model
 model =
     { mode =
         Edit Nothing
-            { direction = DirectionUndefined
-            , date = DateUndefined
+            { date = DateUndefined
             , error = Nothing
             }
     , now = Date.fromTime 0
@@ -94,89 +81,37 @@ subscriptions { mode } =
 view : Model -> Html Msg
 view { mode, now } =
     case mode of
-        Tick counting ->
-            ticker now counting
+        Tick origin ->
+            ticker now origin
 
-        Edit countingOrNot { direction, date } ->
+        Edit originOrNot { date } ->
             Html.form [ onSubmit FormSubmit ]
-                [ directionChoice direction
+                [ dateLabel
                 , dateInput date
-                , controlButtons countingOrNot
+                , controlButtons originOrNot
                 ]
 
 
-ticker : Date -> Counting -> Html msg
-ticker now counting =
-    div [] [ text <| tickerString now counting ]
+ticker : Date -> Date -> Html msg
+ticker dateA dateB =
+    div [] [ text <| tickerString dateA dateB ]
 
 
-tickerString : Date -> Counting -> String
-tickerString now counting =
-    let
-        origin =
-            case counting of
-                UpFrom d ->
-                    d
-
-                DownTo d ->
-                    d
-
-        diff =
-            abs <| Date.toTime origin - Date.toTime now
-    in
-        (toString diff) ++ " ms"
+tickerString : Date -> Date -> String
+tickerString dateA dateB =
+    (toString <| abs <| Date.toTime dateA - Date.toTime dateB) ++ " ms"
 
 
-directionChoice : DirectionField -> Html Msg
-directionChoice direction =
-    div []
-        [ input
-            (directionRadioAttributes "up" directionRadioUpOnCheckHandler <| direction == DirectionUp)
-            []
-        , label [ for "directionUp" ] [ text "Count up from" ]
-        , input
-            (directionRadioAttributes "down" directionRadioDownOnCheckHandler <| direction == DirectionDown)
-            []
-        , label [ for "directionDown" ] [ text "Count down to" ]
-        ]
-
-
-directionRadioAttributes : String -> (Bool -> Msg) -> Bool -> List (Attribute Msg)
-directionRadioAttributes key handler isChecked =
-    [ type_ "radio"
-    , name "direction"
-    , value key
-    , id key
-    , required True
-    , onCheck handler
-    ]
-        ++ (if isChecked then
-                [ checked True ]
-            else
-                []
-           )
-
-
-directionRadioUpOnCheckHandler : Bool -> Msg
-directionRadioUpOnCheckHandler checked =
-    if checked then
-        FormChangeDirection DirectionUp
-    else
-        FormChangeDirection DirectionUndefined
-
-
-directionRadioDownOnCheckHandler : Bool -> Msg
-directionRadioDownOnCheckHandler checked =
-    if checked then
-        FormChangeDirection DirectionDown
-    else
-        FormChangeDirection DirectionUndefined
+dateLabel : Html Msg
+dateLabel =
+    label [ for "date" ] [ text "Count up-from/down-to" ]
 
 
 dateInput : DateField -> Html Msg
 dateInput dateField =
     input
         [ type_ "date"
+        , id "date"
         , name "date"
         , required True
         , placeholder "YYYY-MM-DD"
@@ -211,11 +146,11 @@ dateInputOnInputHandler value =
             FormChangeDate DateInvalid
 
 
-controlButtons : Maybe Counting -> Html Msg
-controlButtons countingOrNot =
+controlButtons : Maybe Date -> Html Msg
+controlButtons originOrNot =
     div []
         (button [ type_ "submit" ] [ text "Save" ]
-            :: case countingOrNot of
+            :: case originOrNot of
                 Just _ ->
                     [ button [ type_ "button", onClick FormCancel ] [ text "Cancel" ] ]
 
@@ -283,38 +218,28 @@ update msg { mode, now } =
                 _ ->
                     ( Model mode now, Cmd.none )
 
-        Edit countingOrNot form ->
+        Edit originOrNot form ->
             case msg of
-                FormChangeDirection directionField ->
-                    ( Model
-                        (Edit countingOrNot { form | direction = directionField })
-                        now
-                    , Cmd.none
-                    )
-
                 FormChangeDate dateField ->
                     ( Model
-                        (Edit countingOrNot { form | date = dateField, error = Nothing })
+                        (Edit originOrNot { form | date = dateField, error = Nothing })
                         now
                     , Cmd.none
                     )
 
                 FormSubmit ->
                     let
-                        { direction, date } =
+                        { date } =
                             form
                     in
-                        case ( direction, date ) of
-                            ( DirectionUp, DateValid d ) ->
-                                ( Model (Tick (UpFrom d)) now, Cmd.none )
+                        case date of
+                            DateValid d ->
+                                ( Model (Tick d) now, Cmd.none )
 
-                            ( DirectionDown, DateValid d ) ->
-                                ( Model (Tick (DownTo d)) now, Cmd.none )
-
-                            ( _, _ ) ->
+                            _ ->
                                 ( Model
                                     (Edit
-                                        countingOrNot
+                                        originOrNot
                                         { form | error = Just "This isn't a valid date" }
                                     )
                                     now
@@ -322,9 +247,9 @@ update msg { mode, now } =
                                 )
 
                 FormCancel ->
-                    case countingOrNot of
-                        Just counting ->
-                            ( Model (Tick counting) now, Cmd.none )
+                    case originOrNot of
+                        Just origin ->
+                            ( Model (Tick origin) now, Cmd.none )
 
                         Nothing ->
                             ( Model (Edit Nothing form) now, Cmd.none )
