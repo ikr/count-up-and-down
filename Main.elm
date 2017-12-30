@@ -100,7 +100,15 @@ tickerString dateA dateB =
 
 formContainer : Maybe Date -> Form -> Html Msg
 formContainer originOrNot { date, error } =
-    form originOrNot date
+    div []
+        ([ form originOrNot date ]
+            ++ case error of
+                Just errorString ->
+                    [ text errorString ]
+
+                Nothing ->
+                    []
+        )
 
 
 form : Maybe Date -> DateField -> Html Msg
