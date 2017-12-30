@@ -229,48 +229,58 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg { mode, now } =
     case mode of
         Tick _ ->
-            case msg of
-                CurrentTime t ->
-                    ( { mode = mode, now = t }, Cmd.none )
-
-                _ ->
-                    ( Model mode now, Cmd.none )
+            updateWhenTicking msg model
 
         Edit originOrNot form ->
-            case msg of
-                FormChangeDate dateField ->
-                    ( Model
-                        (Edit originOrNot { form | dateField = dateField, error = Nothing })
-                        now
-                    , Cmd.none
-                    )
+            updateWhenEditing msg originOrNot form now
 
-                FormSubmit ->
-                    let
-                        { dateField } =
-                            form
-                    in
-                        case dateField of
-                            DateValid d ->
-                                ( Model (Tick d) now, Cmd.none )
 
-                            _ ->
-                                ( Model
-                                    (Edit
-                                        originOrNot
-                                        { form | error = Just "This isn't a valid date" }
-                                    )
-                                    now
-                                , Cmd.none
-                                )
+updateWhenTicking : Msg -> Model -> ( Model, Cmd Msg )
+updateWhenTicking msg { mode, now } =
+    case msg of
+        CurrentTime t ->
+            ( { mode = mode, now = t }, Cmd.none )
 
-                FormCancel ->
-                    case originOrNot of
-                        Just origin ->
-                            ( Model (Tick origin) now, Cmd.none )
+        _ ->
+            ( Model mode now, Cmd.none )
 
-                        Nothing ->
-                            ( Model (Edit Nothing form) now, Cmd.none )
 
-                CurrentTime t ->
-                    ( { mode = mode, now = t }, Cmd.none )
+updateWhenEditing : Msg -> Maybe Date -> Form -> Date -> ( Model, Cmd Msg )
+updateWhenEditing msg originOrNot form now =
+    case msg of
+        FormChangeDate dateField ->
+            ( Model
+                (Edit originOrNot { form | dateField = dateField, error = Nothing })
+                now
+            , Cmd.none
+            )
+
+        FormSubmit ->
+            let
+                { dateField } =
+                    form
+            in
+                case dateField of
+                    DateValid d ->
+                        ( Model (Tick d) now, Cmd.none )
+
+                    _ ->
+                        ( Model
+                            (Edit
+                                originOrNot
+                                { form | error = Just "This isn't a valid date" }
+                            )
+                            now
+                        , Cmd.none
+                        )
+
+        FormCancel ->
+            case originOrNot of
+                Just origin ->
+                    ( Model (Tick origin) now, Cmd.none )
+
+                Nothing ->
+                    ( Model (Edit Nothing form) now, Cmd.none )
+
+        CurrentTime t ->
+            ( { mode = Edit originOrNot form, now = t }, Cmd.none )
