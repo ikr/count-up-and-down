@@ -85,11 +85,16 @@ view { mode, now } =
             ticker now origin
 
         Edit originOrNot { date } ->
-            Html.form [ onSubmit FormSubmit ]
-                [ dateLabel
-                , dateInput date
-                , controlButtons originOrNot
-                ]
+            form originOrNot date
+
+
+form : Maybe Date -> DateField -> Html Msg
+form originOrNot dateField =
+    Html.form [ onSubmit FormSubmit ]
+        [ dateLabel
+        , dateInput dateField
+        , controlButtons originOrNot
+        ]
 
 
 ticker : Date -> Date -> Html msg
