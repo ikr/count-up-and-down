@@ -90,7 +90,10 @@ view { mode, now } =
 
 ticker : Date -> Date -> Html msg
 ticker dateA dateB =
-    div [] [ text <| tickerString dateA dateB ]
+    div
+        [ style [ ( "cursor", "pointer" ) ]
+        ]
+        [ text <| tickerString dateA dateB ]
 
 
 tickerString : Date -> Date -> String
