@@ -6,7 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task
 import Time exposing (Time, second)
-import Date.Extra.Duration exposing (diff)
+import Date.Extra.Duration exposing (diff, DeltaRecord)
 
 
 type DateField
@@ -102,8 +102,13 @@ tickerString dateA dateB =
         d =
             diff dateA dateB
     in
-        String.join ":" <|
-            List.map (String.padLeft 2 '0' << toString) [ d.hour, d.minute, d.second ]
+        hhMmSsString d
+
+
+hhMmSsString : DeltaRecord -> String
+hhMmSsString d =
+    String.join ":" <|
+        List.map (String.padLeft 2 '0' << toString) [ d.hour, d.minute, d.second ]
 
 
 formContainer : Maybe Date -> Form -> Html Msg
