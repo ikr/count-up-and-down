@@ -50,18 +50,15 @@ main =
 
 init : ( Model, Cmd Msg )
 init =
-    ( model, Task.perform CurrentTime Date.now )
-
-
-model : Model
-model =
-    { mode =
-        Edit Nothing
-            { dateField = DateUndefined
-            , error = Nothing
-            }
-    , now = Date.fromTime 0
-    }
+    ( { mode =
+            Edit Nothing
+                { dateField = DateUndefined
+                , error = Nothing
+                }
+      , now = Date.fromTime 0
+      }
+    , Task.perform CurrentTime Date.now
+    )
 
 
 subscriptions : Model -> Sub Msg
@@ -232,7 +229,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg { mode, now } =
     case mode of
         Tick _ ->
-            updateWhenTicking msg model
+            updateWhenTicking msg { mode = mode, now = now }
 
         Edit originOrNot form ->
             updateWhenEditing msg originOrNot form now
