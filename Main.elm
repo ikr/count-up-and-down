@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task
 import Time exposing (Time, second)
+import Date.Extra.Duration exposing (diff)
 
 
 type DateField
@@ -97,7 +98,12 @@ ticker dateA dateB =
 
 tickerString : Date -> Date -> String
 tickerString dateA dateB =
-    toString <| abs <| Date.toTime dateA - Date.toTime dateB
+    let
+        d =
+            diff dateA dateB
+    in
+        String.join ":" <|
+            List.map (String.padLeft 2 '0' << toString) [ d.hour, d.minute, d.second ]
 
 
 formContainer : Maybe Date -> Form -> Html Msg
