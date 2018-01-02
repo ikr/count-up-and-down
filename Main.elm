@@ -102,13 +102,18 @@ tickerString dateA dateB =
         d =
             diff dateA dateB
     in
-        hhMmSsString d
+        hoursMinutesSecondsString d
 
 
-hhMmSsString : DeltaRecord -> String
-hhMmSsString d =
+hoursMinutesSecondsString : DeltaRecord -> String
+hoursMinutesSecondsString d =
     String.join ":" <|
         List.map (String.padLeft 2 '0' << toString) [ d.hour, d.minute, d.second ]
+
+
+yearsMonthsDaysString : DeltaRecord -> String
+yearsMonthsDaysString d =
+    ""
 
 
 formContainer : Maybe Date -> Form -> Html Msg
