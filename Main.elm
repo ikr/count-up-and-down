@@ -7,6 +7,8 @@ import Html.Events exposing (..)
 import Task
 import Time exposing (Time, second)
 import Date.Extra.Duration exposing (diff, DeltaRecord)
+import Date.Extra.Format exposing (format)
+import Date.Extra.Config.Config_de_de exposing (config)
 
 
 type DateField
@@ -180,7 +182,7 @@ dateInputDefaultValue dateField =
             ""
 
         DateValid date ->
-            iso8601 date
+            format config "%Y-%m-%d" date
 
 
 dateInputOnInputHandler : String -> Msg
@@ -204,50 +206,6 @@ controlButtons originOrNot =
                 Nothing ->
                     []
         )
-
-
-iso8601 : Date -> String
-iso8601 date =
-    String.join "-"
-        [ Date.year date |> toString
-        , case Date.month date of
-            Date.Jan ->
-                "01"
-
-            Date.Feb ->
-                "02"
-
-            Date.Mar ->
-                "03"
-
-            Date.Apr ->
-                "04"
-
-            Date.May ->
-                "05"
-
-            Date.Jun ->
-                "06"
-
-            Date.Jul ->
-                "07"
-
-            Date.Aug ->
-                "08"
-
-            Date.Sep ->
-                "09"
-
-            Date.Oct ->
-                "10"
-
-            Date.Nov ->
-                "11"
-
-            Date.Dec ->
-                "12"
-        , Date.day date |> toString |> String.padLeft 2 '0'
-        ]
 
 
 
