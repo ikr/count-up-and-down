@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task
 import Time exposing (Time, second)
+import Date.Extra.Create exposing (dateFromFields)
 import Date.Extra.Duration exposing (diff, DeltaRecord)
 import Date.Extra.Format exposing (format)
 import Date.Extra.Config.Config_de_de exposing (config)
@@ -188,8 +189,9 @@ dateInputDefaultValue dateField =
 dateInputOnInputHandler : String -> Msg
 dateInputOnInputHandler value =
     case Date.fromString value of
-        Ok date ->
-            FormChangeDate (DateValid date)
+        Ok d ->
+            FormChangeDate
+                (DateValid <| dateFromFields (Date.year d) (Date.month d) (Date.day d) 0 0 0 0)
 
         Err _ ->
             FormChangeDate DateInvalid
