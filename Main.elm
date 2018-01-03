@@ -102,7 +102,7 @@ tickerString dateA dateB =
         d =
             diff dateA dateB
     in
-        hoursMinutesSecondsString d
+        yearsMonthsDaysString d ++ " " ++ hoursMinutesSecondsString d
 
 
 hoursMinutesSecondsString : DeltaRecord -> String
@@ -113,7 +113,18 @@ hoursMinutesSecondsString d =
 
 yearsMonthsDaysString : DeltaRecord -> String
 yearsMonthsDaysString d =
-    ""
+    List.map
+        pluralize
+        [ ( "year", "years", d.year ), ( "month", "months", d.month ), ( "day", "days", d.day ) ]
+        |> String.join " "
+
+
+pluralize : ( String, String, number ) -> String
+pluralize ( single, plural, count ) =
+    if count == 1 then
+        toString count ++ " " ++ single
+    else
+        toString count ++ " " ++ plural
 
 
 formContainer : Maybe Date -> Form -> Html Msg
