@@ -1,0 +1,34 @@
+{
+  "name": "@ikr/count-up-and-down",
+  "version": "1.0.0",
+  "description": "A ticking counter Web widget. Counts time from- or to a specified date. The date is stored in the browser's persistent `localStorage`.",
+  "main": "www/elm.js",
+  "scripts": {
+    "build": "elm-make src/Main.elm --warn --output www/elm0.js && uglifyjs ./www/elm0.js -m -o www/elm.js && rm www/elm0.js",
+    "test": "elm-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ikr/count-up-and-down.git"
+  },
+  "keywords": [
+    "count",
+    "timer",
+    "tick",
+    "countdown",
+    "countup",
+    "browser",
+    "web",
+    "widget"
+  ],
+  "author": "Ivan Krechetov <ikr@ikr.su>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ikr/count-up-and-down/issues"
+  },
+  "homepage": "https://github.com/ikr/count-up-and-down#readme",
+  "devDependencies": {
+    "elm": "^0.18.0",
+    "uglify-js": "^3.3.4"
+  }
+}
