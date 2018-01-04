@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Date exposing (Date)
 import Html exposing (..)
@@ -8,7 +8,7 @@ import Task
 import Time exposing (Time, second)
 import Date.Extra.Create exposing (dateFromFields)
 import Date.Extra.Duration exposing (diff, DeltaRecord)
-import Date.Extra.Format exposing (format)
+import Date.Extra.Format exposing (format, isoString)
 import Date.Extra.Config.Config_de_de exposing (config)
 
 
@@ -74,6 +74,9 @@ subscriptions { mode } =
 
         Edit _ _ ->
             Sub.none
+
+
+port persist : String -> Cmd msg
 
 
 
@@ -265,7 +268,7 @@ updateOnFormSubmit model =
                 in
                     case dateField of
                         DateValid d ->
-                            ( Model (Tick d) now, Cmd.none )
+                            ( Model (Tick d) now, persist <| isoString d )
 
                         DateInvalid ->
                             ( { mode =

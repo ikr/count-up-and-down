@@ -9,8 +9,12 @@
     <script src="elm.js"></script>
 
     <script>
-        var node = document.getElementById('main')
-        var app = Elm.Main.embed(node)
+      var node = document.getElementById('main')
+      var app = Elm.Main.embed(node)
+
+      app.ports.persist.subscribe(function(d) {
+        console.log(d)
+      })
     </script>
   </body>
 </html>
