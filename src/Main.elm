@@ -44,7 +44,7 @@ type alias Flags =
 
 
 
--- MODEL
+-- BOOTSTRAP
 
 
 main : Program Flags Model Msg
@@ -66,22 +66,27 @@ init { origin } =
                     Edit Nothing { dateField = DateUndefined, error = Nothing }
 
                 Just dateString ->
-                    case Date.fromString dateString of
-                        Err error ->
-                            Edit Nothing
-                                { dateField = DateUndefined
-                                , error =
-                                    Just <|
-                                        "Failed reading the persisted origin date: "
-                                            ++ error
-                                }
-
-                        Ok date ->
-                            Tick date
+                    initMode dateString
     in
         ( { mode = mode, now = Date.fromTime 0 }
         , Task.perform CurrentTime Date.now
         )
+
+
+initMode : String -> Mode
+initMode dateString =
+    case Date.fromString dateString of
+        Err error ->
+            Edit Nothing
+                { dateField = DateUndefined
+                , error =
+                    Just <|
+                        "Failed reading the persisted origin date: "
+                            ++ error
+                }
+
+        Ok date ->
+            Tick date
 
 
 subscriptions : Model -> Sub Msg
