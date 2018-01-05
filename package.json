@@ -4,7 +4,7 @@
   "description": "A ticking counter Web widget. Counts time from- or to a specified date. The date is stored in the browser's persistent localStorage.",
   "main": "www/elm.js",
   "scripts": {
-    "build": "elm-make src/Main.elm --warn --output www/elm0.js && uglifyjs ./www/elm0.js -mc -o www/elm.js && rm www/elm0.js",
+    "build": "elm-make src/Main.elm --yes --warn --output www/elm0.js && uglifyjs ./www/elm0.js -mc -o www/elm.js && rm www/elm0.js",
     "test": "elm-test"
   },
   "repository": {
