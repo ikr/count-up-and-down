@@ -10,10 +10,11 @@
 
     <script>
       var node = document.getElementById('main')
-      var app = Elm.Main.embed(node)
+      var KEY = '@ikr/count-up-or-down/origin'
+      var app = Elm.Main.embed(node, {origin: localStorage.getItem(KEY)})
 
       app.ports.persist.subscribe(function(d) {
-        localStorage.setItem('@ikr/count-up-or-down', d)
+        localStorage.setItem(KEY, d)
       })
     </script>
   </body>

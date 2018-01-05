@@ -39,13 +39,17 @@ type Msg
     | SwitchToEdit
 
 
+type alias Flags =
+    { origin : Maybe String }
+
+
 
 -- MODEL
 
 
-main : Program Never Model Msg
+main : Program Flags Model Msg
 main =
-    program
+    programWithFlags
         { init = init
         , update = update
         , subscriptions = subscriptions
@@ -53,17 +57,31 @@ main =
         }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( { mode =
-            Edit Nothing
-                { dateField = DateUndefined
-                , error = Nothing
-                }
-      , now = Date.fromTime 0
-      }
-    , Task.perform CurrentTime Date.now
-    )
+init : Flags -> ( Model, Cmd Msg )
+init { origin } =
+    let
+        mode =
+            case origin of
+                Nothing ->
+                    Edit Nothing { dateField = DateUndefined, error = Nothing }
+
+                Just dateString ->
+                    case Date.fromString dateString of
+                        Err error ->
+                            Edit Nothing
+                                { dateField = DateUndefined
+                                , error =
+                                    Just <|
+                                        "Failed reading the persisted origin date: "
+                                            ++ error
+                                }
+
+                        Ok date ->
+                            Tick date
+    in
+        ( { mode = mode, now = Date.fromTime 0 }
+        , Task.perform CurrentTime Date.now
+        )
 
 
 subscriptions : Model -> Sub Msg
