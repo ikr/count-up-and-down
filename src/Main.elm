@@ -119,7 +119,7 @@ view { mode, now } =
 ticker : Date -> Date -> Html Msg
 ticker dateA dateB =
     div
-        [ style [ ( "cursor", "pointer" ) ]
+        [ class "ticker-string"
         , onClick SwitchToEdit
         ]
         [ text <| tickerString dateA dateB ]
