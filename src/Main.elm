@@ -174,8 +174,10 @@ formContainer originOrNot { dateField, error } =
 form : Maybe Date -> DateField -> Html Msg
 form originOrNot dateField =
     Html.form [ onSubmit FormSubmit ]
-        [ dateLabel
-        , dateInput dateField
+        [ div [ class "form-group" ]
+            [ dateLabel
+            , dateInput dateField
+            ]
         , controlButtons originOrNot
         ]
 
@@ -197,6 +199,7 @@ dateInput dateField =
         , pattern "^\\d{4}-[0-1]\\d-[0-3]\\d$"
         , defaultValue <| dateInputDefaultValue dateField
         , onInput dateInputOnInputHandler
+        , class "form-control"
         ]
         []
 
@@ -227,11 +230,17 @@ dateInputOnInputHandler value =
 
 controlButtons : Maybe Date -> Html Msg
 controlButtons originOrNot =
-    div []
-        (button [ type_ "submit" ] [ text "Save" ]
+    div [ class "form-group" ]
+        (button [ type_ "submit", class "btn btn-primary" ] [ text "Save" ]
             :: case originOrNot of
                 Just _ ->
-                    [ button [ type_ "button", onClick FormCancel ] [ text "Cancel" ] ]
+                    [ button
+                        [ type_ "button"
+                        , class "btn btn-secondary"
+                        , onClick FormCancel
+                        ]
+                        [ text "Cancel" ]
+                    ]
 
                 Nothing ->
                     []
