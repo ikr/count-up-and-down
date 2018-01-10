@@ -108,22 +108,12 @@ port persist : String -> Cmd msg
 
 view : Model -> Html Msg
 view { mode, now } =
-    let
-        content =
-            case mode of
-                Tick origin ->
-                    ticker now origin
+    case mode of
+        Tick origin ->
+            ticker now origin
 
-                Edit originOrNot form ->
-                    formContainer originOrNot form
-    in
-        div [ class "container" ]
-            [ header [ class "header" ] []
-            , main_ []
-                [ content
-                ]
-            , footer [ class "footer" ] []
-            ]
+        Edit originOrNot form ->
+            formContainer originOrNot form
 
 
 ticker : Date -> Date -> Html Msg
