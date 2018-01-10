@@ -108,21 +108,33 @@ port persist : String -> Cmd msg
 
 view : Model -> Html Msg
 view { mode, now } =
-    case mode of
-        Tick origin ->
-            ticker now origin
+    let
+        content =
+            case mode of
+                Tick origin ->
+                    ticker now origin
 
-        Edit originOrNot form ->
-            formContainer originOrNot form
+                Edit originOrNot form ->
+                    formContainer originOrNot form
+    in
+        div [ class "container" ]
+            [ header [ class "header" ] []
+            , main_ []
+                [ content
+                ]
+            , footer [ class "footer" ] []
+            ]
 
 
 ticker : Date -> Date -> Html Msg
 ticker dateA dateB =
-    div
-        [ class "ticker-string"
-        , onClick SwitchToEdit
+    div [ class "jumbotron" ]
+        [ h1
+            [ class "ticker-string display-4"
+            , onClick SwitchToEdit
+            ]
+            [ text <| tickerString dateA dateB ]
         ]
-        [ text <| tickerString dateA dateB ]
 
 
 tickerString : Date -> Date -> String
@@ -151,9 +163,9 @@ yearsMonthsDaysString d =
 pluralize : ( String, String, number ) -> String
 pluralize ( single, plural, count ) =
     if count == 1 then
-        toString count ++ " " ++ single
+        toString count ++ " " ++ single
     else
-        toString count ++ " " ++ plural
+        toString count ++ " " ++ plural
 
 
 formContainer : Maybe Date -> Form -> Html Msg
