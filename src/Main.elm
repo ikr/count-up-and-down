@@ -131,7 +131,10 @@ tickerString : Date -> Date -> String
 tickerString dateA dateB =
     let
         d =
-            diff dateA dateB
+            if Date.toTime dateA >= Date.toTime dateB then
+                diff dateA dateB
+            else
+                diff dateB dateA
     in
         yearsMonthsDaysString d ++ " " ++ hoursMinutesSecondsString d
 
