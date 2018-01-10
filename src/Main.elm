@@ -178,6 +178,8 @@ form originOrNot dateField =
             [ dateLabel
             , dateInput dateField
             ]
+        , div [ class "form-group" ]
+            [ timeInput dateField ]
         , controlButtons originOrNot
         ]
 
@@ -204,6 +206,22 @@ dateInput dateField =
         []
 
 
+timeInput : DateField -> Html msg
+timeInput dateField =
+    input
+        [ type_ "time"
+        , id "time"
+        , name "time"
+        , required True
+        , placeholder "HH:MM"
+        , title "HH:MM"
+        , pattern "^[0-2]\\d:[0-5]\\d$"
+        , defaultValue <| timeInputDefaultValue dateField
+        , class "form-control"
+        ]
+        []
+
+
 dateInputDefaultValue : DateField -> String
 dateInputDefaultValue dateField =
     case dateField of
@@ -215,6 +233,19 @@ dateInputDefaultValue dateField =
 
         DateValid date ->
             format config "%Y-%m-%d" date
+
+
+timeInputDefaultValue : DateField -> String
+timeInputDefaultValue dateField =
+    case dateField of
+        DateUndefined ->
+            ""
+
+        DateInvalid ->
+            ""
+
+        DateValid date ->
+            format config "%H:%M" date
 
 
 dateInputOnInputHandler : String -> Msg
