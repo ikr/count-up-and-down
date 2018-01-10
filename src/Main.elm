@@ -234,7 +234,8 @@ controlButtons originOrNot =
         (button [ type_ "submit", class "btn btn-primary" ] [ text "Save" ]
             :: case originOrNot of
                 Just _ ->
-                    [ button
+                    [ text " "
+                    , button
                         [ type_ "button"
                         , class "btn btn-secondary"
                         , onClick FormCancel
