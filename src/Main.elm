@@ -164,7 +164,7 @@ formContainer originOrNot { dateField, error } =
         ([ form originOrNot dateField ]
             ++ case error of
                 Just errorString ->
-                    [ text errorString ]
+                    [ errorElement errorString ]
 
                 Nothing ->
                     []
@@ -246,6 +246,11 @@ controlButtons originOrNot =
                 Nothing ->
                     []
         )
+
+
+errorElement : String -> Html msg
+errorElement errorMessage =
+    div [ class "alert alert-warning" ] [ text errorMessage ]
 
 
 
