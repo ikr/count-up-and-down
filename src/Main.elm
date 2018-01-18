@@ -165,9 +165,9 @@ pluralize ( single, plural, count ) =
 
 
 formContainer : Maybe Date -> Form -> Html Msg
-formContainer originOrNot { dateField, error } =
+formContainer originOrNot { dateField, timeField, error } =
     div []
-        ([ form originOrNot dateField ]
+        ([ form originOrNot dateField timeField ]
             ++ case error of
                 Just errorString ->
                     [ errorElement errorString ]
@@ -177,15 +177,15 @@ formContainer originOrNot { dateField, error } =
         )
 
 
-form : Maybe Date -> DateField -> Html Msg
-form originOrNot dateField =
+form : Maybe Date -> DateField -> DateField -> Html Msg
+form originOrNot dateField timeField =
     Html.form [ onSubmit FormSubmit ]
         [ div [ class "form-group" ]
             [ dateLabel
             , dateInput dateField
             ]
         , div [ class "form-group" ]
-            [ timeInput dateField ]
+            [ timeInput timeField ]
         , controlButtons originOrNot
         ]
 
