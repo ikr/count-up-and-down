@@ -5,7 +5,7 @@
   "main": "www/elm.js",
   "scripts": {
     "build": "elm-make src/Main.elm --yes --warn --output www/elm0.js && uglifyjs ./www/elm0.js -mc -o www/elm.js && rm www/elm0.js",
-    "dev-build": "elm-make src/Main.elm --yes --warn --output www/elm.js",
+    "dev-build": "elm-make src/Main.elm --yes --warn --debug --output www/elm.js",
     "watch": "chokidar src -c 'npm run dev-build'",
     "test": "elm-test"
   },
