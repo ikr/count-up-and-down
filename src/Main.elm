@@ -19,7 +19,7 @@ type DateField
 
 
 type alias Form =
-    { dateField : DateField, error : Maybe String }
+    { dateField : DateField, timeField : DateField, error : Maybe String }
 
 
 type Mode
@@ -33,6 +33,7 @@ type alias Model =
 
 type Msg
     = FormChangeDate DateField
+    | FormChangeTime DateField
     | FormSubmit
     | FormCancel
     | CurrentTime Date
@@ -63,7 +64,11 @@ init { origin } =
         mode =
             case origin of
                 Nothing ->
-                    Edit Nothing { dateField = DateUndefined, error = Nothing }
+                    Edit Nothing
+                        { dateField = DateUndefined
+                        , timeField = DateUndefined
+                        , error = Nothing
+                        }
 
                 Just dateString ->
                     initMode dateString
@@ -79,6 +84,7 @@ initMode dateString =
         Err error ->
             Edit Nothing
                 { dateField = DateUndefined
+                , timeField = DateUndefined
                 , error =
                     Just <|
                         "Failed reading the persisted origin date: "
@@ -206,8 +212,8 @@ dateInput dateField =
         []
 
 
-timeInput : DateField -> Html msg
-timeInput dateField =
+timeInput : DateField -> Html Msg
+timeInput timeField =
     input
         [ type_ "time"
         , id "time"
@@ -216,7 +222,8 @@ timeInput dateField =
         , placeholder "HH:MM"
         , title "HH:MM"
         , pattern "^[0-2]\\d:[0-5]\\d$"
-        , defaultValue <| timeInputDefaultValue dateField
+        , defaultValue <| timeInputDefaultValue timeField
+        , onInput timeInputOnInputHandler
         , class "form-control"
         ]
         []
@@ -259,6 +266,17 @@ dateInputOnInputHandler value =
             FormChangeDate DateInvalid
 
 
+timeInputOnInputHandler : String -> Msg
+timeInputOnInputHandler value =
+    case Date.fromString <| "1970-01-01T" ++ value ++ ":00" of
+        Ok d ->
+            FormChangeTime
+                (DateValid <| dateFromFields 1970 Date.Jan 1 (Date.hour d) (Date.minute d) 0 0)
+
+        Err _ ->
+            FormChangeTime DateInvalid
+
+
 controlButtons : Maybe Date -> Html Msg
 controlButtons originOrNot =
     div [ class "form-group" ]
@@ -294,6 +312,9 @@ update msg model =
         FormChangeDate dateField ->
             updateOnFormChangeDate dateField model
 
+        FormChangeTime timeField ->
+            updateOnFormChangeTime timeField model
+
         FormSubmit ->
             updateOnFormSubmit model
 
@@ -325,6 +346,24 @@ updateOnFormChangeDate dateField model =
                 ( model, Cmd.none )
 
 
+updateOnFormChangeTime : DateField -> Model -> ( Model, Cmd Msg )
+updateOnFormChangeTime timeField model =
+    let
+        { mode, now } =
+            model
+    in
+        case mode of
+            Edit originOrNot form ->
+                ( Model
+                    (Edit originOrNot { form | timeField = timeField, error = Nothing })
+                    now
+                , Cmd.none
+                )
+
+            Tick _ ->
+                ( model, Cmd.none )
+
+
 updateOnFormSubmit : Model -> ( Model, Cmd Msg )
 updateOnFormSubmit model =
     let
@@ -334,14 +373,24 @@ updateOnFormSubmit model =
         case mode of
             Edit originOrNot form ->
                 let
-                    { dateField } =
+                    { dateField, timeField } =
                         form
                 in
-                    case dateField of
-                        DateValid d ->
-                            ( Model (Tick d) now, persist <| isoString d )
+                    case ( dateField, timeField ) of
+                        ( DateValid d, DateValid t ) ->
+                            let
+                                newOrigin =
+                                    dateFromFields (Date.year d)
+                                        (Date.month d)
+                                        (Date.day d)
+                                        (Date.hour t)
+                                        (Date.minute t)
+                                        0
+                                        0
+                            in
+                                ( Model (Tick newOrigin) now, persist <| isoString newOrigin )
 
-                        DateInvalid ->
+                        ( DateInvalid, _ ) ->
                             ( { mode =
                                     Edit originOrNot
                                         { form
@@ -352,11 +401,33 @@ updateOnFormSubmit model =
                             , Cmd.none
                             )
 
-                        DateUndefined ->
+                        ( DateUndefined, _ ) ->
                             ( { mode =
                                     Edit originOrNot
                                         { form
                                             | error = Just "No date"
+                                        }
+                              , now = now
+                              }
+                            , Cmd.none
+                            )
+
+                        ( _, DateInvalid ) ->
+                            ( { mode =
+                                    Edit originOrNot
+                                        { form
+                                            | error = Just "This isn't a valid time"
+                                        }
+                              , now = now
+                              }
+                            , Cmd.none
+                            )
+
+                        ( _, DateUndefined ) ->
+                            ( { mode =
+                                    Edit originOrNot
+                                        { form
+                                            | error = Just "No time"
                                         }
                               , now = now
                               }
@@ -405,6 +476,7 @@ updateOnSwitchToEdit model =
                 ( Model
                     (Edit (Just origin)
                         { dateField = DateValid origin
+                        , timeField = DateValid origin
                         , error = Nothing
                         }
                     )
