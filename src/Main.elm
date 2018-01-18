@@ -137,7 +137,7 @@ tickerString : Date -> Date -> String
 tickerString dateA dateB =
     let
         d =
-            diff dateB dateA
+            diff dateA dateB
     in
         yearsMonthsDaysString d ++ " " ++ hoursMinutesSecondsString d
 
