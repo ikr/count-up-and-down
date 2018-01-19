@@ -380,59 +380,21 @@ updateOnFormSubmit model =
                         ( DateValid d, DateValid t ) ->
                             let
                                 newOrigin =
-                                    dateFromFields (Date.year d)
-                                        (Date.month d)
-                                        (Date.day d)
-                                        (Date.hour t)
-                                        (Date.minute t)
-                                        0
-                                        0
+                                    combineDateTime d t
                             in
                                 ( Model (Tick newOrigin) now, persist <| isoString newOrigin )
 
                         ( DateInvalid, _ ) ->
-                            ( { mode =
-                                    Edit originOrNot
-                                        { form
-                                            | error = Just "This isn't a valid date"
-                                        }
-                              , now = now
-                              }
-                            , Cmd.none
-                            )
+                            ( editWithError originOrNot form now "This isn't a valid date", Cmd.none )
 
                         ( DateUndefined, _ ) ->
-                            ( { mode =
-                                    Edit originOrNot
-                                        { form
-                                            | error = Just "No date"
-                                        }
-                              , now = now
-                              }
-                            , Cmd.none
-                            )
+                            ( editWithError originOrNot form now "No date", Cmd.none )
 
                         ( _, DateInvalid ) ->
-                            ( { mode =
-                                    Edit originOrNot
-                                        { form
-                                            | error = Just "This isn't a valid time"
-                                        }
-                              , now = now
-                              }
-                            , Cmd.none
-                            )
+                            ( editWithError originOrNot form now "This isn't a valid time", Cmd.none )
 
                         ( _, DateUndefined ) ->
-                            ( { mode =
-                                    Edit originOrNot
-                                        { form
-                                            | error = Just "No time"
-                                        }
-                              , now = now
-                              }
-                            , Cmd.none
-                            )
+                            ( editWithError originOrNot form now "No time", Cmd.none )
 
             Tick _ ->
                 ( model, Cmd.none )
@@ -483,3 +445,25 @@ updateOnSwitchToEdit model =
                     now
                 , Cmd.none
                 )
+
+
+editWithError : Maybe Date -> Form -> Date -> String -> Model
+editWithError originOrNot form now errorMessage =
+    { mode =
+        Edit originOrNot
+            { form
+                | error = Just errorMessage
+            }
+    , now = now
+    }
+
+
+combineDateTime : Date -> Date -> Date
+combineDateTime datePart timePart =
+    dateFromFields (Date.year datePart)
+        (Date.month datePart)
+        (Date.day datePart)
+        (Date.hour timePart)
+        (Date.minute timePart)
+        0
+        0
