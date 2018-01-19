@@ -210,7 +210,7 @@ dateInput dateField =
         , pattern "^\\d{4}-[0-1]\\d-[0-3]\\d$"
         , defaultValue <| dateInputDefaultValue dateField
         , onInput dateInputOnInputHandler
-        , class "form-control"
+        , class "form-control form-control-lg"
         ]
         []
 
@@ -227,7 +227,7 @@ timeInput timeField =
         , pattern "^[0-2]\\d:[0-5]\\d$"
         , defaultValue <| timeInputDefaultValue timeField
         , onInput timeInputOnInputHandler
-        , class "form-control"
+        , class "form-control form-control-lg"
         ]
         []
 
