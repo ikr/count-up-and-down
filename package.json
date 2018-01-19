@@ -2,10 +2,9 @@
   "name": "@ikr/count-up-or-down",
   "version": "1.0.0",
   "description": "A ticking counter Web widget. Counts time from- or to a specified date. The date is stored in the browser's persistent localStorage.",
-  "main": "www/elm.js",
   "scripts": {
-    "build": "elm-make src/Main.elm --yes --warn --output www/elm0.js && uglifyjs ./www/elm0.js -mc -o www/elm.js && rm www/elm0.js",
-    "dev-build": "elm-make src/Main.elm --yes --warn --debug --output www/elm.js",
+    "build": "elm-make src/Main.elm --yes --warn --output www/elm.js && uglifyjs ./www/elm.js -mc -o www/bundle-v1.0.0.js && rm www/elm.js",
+    "dev-build": "elm-make src/Main.elm --yes --warn --debug --output www/bundle-v1.0.0.js",
     "watch": "chokidar src -c 'npm run dev-build'",
     "test": "elm-test"
   },
