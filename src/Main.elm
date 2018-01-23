@@ -283,13 +283,13 @@ timeInputOnInputHandler value =
 controlButtons : Maybe Date -> Html Msg
 controlButtons originOrNot =
     div [ class "form-group" ]
-        (button [ type_ "submit", class "btn btn-primary" ] [ text "Save" ]
+        (button [ type_ "submit", class "btn btn-lg btn-primary" ] [ text "Save" ]
             :: case originOrNot of
                 Just _ ->
                     [ text " "
                     , button
                         [ type_ "button"
-                        , class "btn btn-secondary"
+                        , class "btn btn-lg btn-secondary"
                         , onClick FormCancel
                         ]
                         [ text "Cancel" ]
