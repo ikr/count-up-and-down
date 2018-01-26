@@ -3,6 +3,9 @@ module Form exposing (initialModel, Model)
 import Date exposing (Date)
 
 
+-- MODEL
+
+
 type alias Model =
     ( Fields, Error )
 
@@ -15,6 +18,12 @@ type alias Error =
     Maybe String
 
 
+type Msg
+    = Change Fields
+    | Submit
+    | Cancel
+
+
 initialModel : Date -> Model
 initialModel defaultValue =
     ( Fields
@@ -25,3 +34,7 @@ initialModel defaultValue =
         (Date.minute defaultValue)
     , Nothing
     )
+
+
+
+-- VIEW
