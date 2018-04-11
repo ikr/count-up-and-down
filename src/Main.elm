@@ -2,6 +2,7 @@ port module Main exposing (..)
 
 import Date exposing (Date)
 import Html exposing (..)
+import Html.Keyed
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Task
@@ -182,14 +183,20 @@ formContainer originOrNot { dateField, timeField, error } =
 
 form : Maybe Date -> DateField -> DateField -> Html Msg
 form originOrNot dateField timeField =
-    Html.form [ onSubmit FormSubmit ]
-        [ div [ class "form-group" ]
-            [ dateLabel
-            , dateInput dateField
-            ]
-        , div [ class "form-group" ]
-            [ timeInput timeField ]
-        , controlButtons originOrNot
+    Html.Keyed.node
+        "form"
+        [ onSubmit FormSubmit ]
+        [ ( "k1"
+          , div [ class "form-group" ]
+                [ dateLabel
+                , dateInput dateField
+                ]
+          )
+        , ( "k2"
+          , div [ class "form-group" ]
+                [ timeInput timeField ]
+          )
+        , ( "k3", controlButtons originOrNot )
         ]
 
 
